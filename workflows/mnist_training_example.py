@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-from flytekit import task, workflow, Resources
+from flytekit import task, workflow, Resources, ImageSpec
 import torch as th
 from torch import nn
 
@@ -10,8 +10,17 @@ This example is a simple MNIST training example. It uses the PyTorch framework t
 The model is trained for 10 epochs and the validation loss is calculated on the test set.
 """
 
+imagespec = ImageSpec(
+    name="flytekit",
+    base_image="nvidia/cuda:12.2.0",
+    registry="ghcr.io/zeryx",
+    packages=["flytekit>=1.8.0",
+              "torch>=2.0,<2.1",
+              "torchvision>=0.15,<0.16"]
+)
 
-@task(requests=Resources(cpu="1", mem="1Gi", ephemeral_storage="10Gi"))
+
+@task(requests=Resources(cpu="1", mem="1Gi", ephemeral_storage="10Gi"), container_image=imagespec)
 def get_dataset(training: bool, gpu: bool = False) -> DataLoader:
     """
     This task downloads the MNIST dataset and returns a dataloader for the dataset.
@@ -26,17 +35,7 @@ def get_dataset(training: bool, gpu: bool = False) -> DataLoader:
     return dataloader
 
 
-@task(requests=Resources(cpu="2", mem="10Gi", ephemeral_storage="10Gi"))
-def train_cpu(dataset: DataLoader, n_epochs: int) -> th.nn.Sequential:
-    """
-    This task trains the model for the specified number of epochs.
-    This variant of the task uses the CPU for training. as you can see from the Resources requested in the task decorator.
-    """
-    model, optim = get_model_architecture()
-    return train_model(model=model, optim=optim, dataset=dataset, n_epochs=n_epochs)
-
-
-@task(requests=Resources(gpu="1", mem="10Gi", ephemeral_storage="10Gi"))
+@task(requests=Resources(gpu="1", mem="10Gi", ephemeral_storage="10Gi"), container_image=imagespec)
 def train_gpu(dataset: DataLoader, n_epochs: int) -> th.nn.Sequential:
     """
     This task trains the model for the specified number of epochs.
@@ -46,7 +45,7 @@ def train_gpu(dataset: DataLoader, n_epochs: int) -> th.nn.Sequential:
     return train_model(model=model, optim=optim, dataset=dataset, n_epochs=n_epochs)
 
 
-@task(requests=Resources(cpu="2", mem="10Gi", ephemeral_storage="15Gi"))
+@task(requests=Resources(cpu="2", mem="10Gi", ephemeral_storage="15Gi"), container_image=imagespec)
 def validation_loss(model: th.nn.Sequential, dataset: DataLoader) -> str:
     """
     This task calculates the validation loss on the test set.
@@ -65,7 +64,6 @@ def validation_loss(model: th.nn.Sequential, dataset: DataLoader) -> str:
         loss += l
     loss = loss / len(losses)
     return "NLL model loss in test set: " + str(loss)
-
 
 
 """
@@ -94,6 +92,7 @@ def train_model(model: th.nn.Sequential, optim: th.optim.Optimizer, dataset: Dat
             optim.step()
     return model
 
+
 def get_model_architecture() -> (th.nn.Sequential, th.optim.Optimizer):
     model = nn.Sequential(
         nn.Conv2d(1, 16, kernel_size=3, padding=1),
@@ -121,9 +120,3 @@ def mnist_workflow_gpu(n_epoch: int = 10) -> str:
     trained_model = train_gpu(dataset=training_dataset, n_epochs=n_epoch)
     output = validation_loss(model=trained_model, dataset=test_dataset)
     return output
-
-
-if __name__ == "__main__":
-    # Execute the workflow, simply by invoking it like a function and passing in
-    # the necessary parameters
-    print(f"Running wf() {mnist_workflow_cpu(n_epoch=10)}")
