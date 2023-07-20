@@ -1,4 +1,4 @@
 flytekit>=1.8.0
 https://download.pytorch.org/whl/cu117/torch-2.0.1%2Bcu117-cp311-cp311-linux_x86_64.whl
-torchvision>=0.15,<0.16
+https://download.pytorch.org/whl/cpu/torchvision-0.15.0%2Bcpu-cp311-cp311-linux_x86_64.whl
 flytekitplugins-envd>=1.8.0
