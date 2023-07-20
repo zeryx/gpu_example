@@ -1,4 +1,4 @@
 flytekit>=1.8.0
-torch>=2.0
+torch==2.0.1
 torchvision>=0.15,<0.16
 flytekitplugins-envd>=1.8.0
