@@ -13,12 +13,12 @@ The model is trained for 10 epochs and the validation loss is calculated on the 
 imagespec = ImageSpec(
     name="flytekit",
     registry="ghcr.io/zeryx",
-    base_image="ubuntu:20.04",
+    base_image="ubuntu20.04",
     packages=["flytekit>=1.8.0",
               "torch>=2.0,<2.1",
               "torchvision>=0.15,<0.16"],
-    cuda=["11.2.2"],
-    cudnn=["8"],
+    cuda="11.2.2",
+    cudnn="8",
     python_version="3.9"
 )
 
