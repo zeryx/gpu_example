@@ -16,7 +16,7 @@ imagespec = ImageSpec(
     base_image="ubuntu20.04",
     packages=["flytekit>=1.8.0",
               "torch>=2.0,<2.1",
-              "torchvision>=0.15,<0.16"],
+              "torchvision>=0.15,<0.17"],
     cuda="11.2.2",
     cudnn="8",
     python_version="3.9"
