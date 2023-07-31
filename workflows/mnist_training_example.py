@@ -19,7 +19,7 @@ imagespec = ImageSpec(
               "torchvision>=0.15,<0.16"],
     cuda="11.2.2",
     cudnn="8",
-    python_version="3.10"
+    python_version="3.9"
 )
 
 
