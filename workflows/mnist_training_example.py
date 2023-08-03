@@ -98,16 +98,16 @@ def train_model(model: th.nn.Sequential, optim: th.optim.Optimizer, dataset: Dat
 
 def get_model_architecture() -> (th.nn.Sequential, th.optim.Optimizer):
     model = nn.Sequential(
-        nn.Conv2d(1, 16, kernel_size=3, padding=1),
+        nn.Conv2d(1, 32, kernel_size=3, padding=1),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=2),
-        nn.Conv2d(16, 32, kernel_size=3, padding=1),
+        nn.Conv2d(32, 1024, kernel_size=3, padding=1),
         nn.ReLU(),
         nn.MaxPool2d(kernel_size=2),
         nn.Flatten(),
-        nn.Linear(32 * 7 * 7, 128),
+        nn.Linear(1024 * 7 * 7, 10024),
         nn.ReLU(),
-        nn.Linear(128, 10)
+        nn.Linear(10024, 10)
     )
     optimizer = th.optim.SGD(model.parameters(), lr=0.003, momentum=0.9)
     return model, optimizer
