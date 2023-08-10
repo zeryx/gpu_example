@@ -121,3 +121,15 @@ def mnist_workflow_gpu(n_epoch: int = 10) -> str:
     trained_model = train_gpu(dataset=training_dataset, n_epochs=n_epoch)
     output = validation_loss(model=trained_model, dataset=test_dataset)
     return output
+
+
+@workflow
+def mnist_workflow_cpu(n_epoch: int = 10) -> str:
+    """
+    This workflow is identical to the previous one, except that it runs the training on the GPU.
+    """
+    training_dataset = get_dataset(training=True, gpu=False)
+    test_dataset = get_dataset(training=False, gpu=False)
+    trained_model = train_gpu(dataset=training_dataset, n_epochs=n_epoch).with_overrides(cpu="2", mem="10Gi", ephemeral_storage="15Gi", gpu="0")
+    output = validation_loss(model=trained_model, dataset=test_dataset)
+    return output
