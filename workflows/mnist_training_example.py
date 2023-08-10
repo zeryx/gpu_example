@@ -36,7 +36,7 @@ def get_dataset(training: bool, gpu: bool = False) -> DataLoader:
     return dataloader
 
 
-@task(requests=Resources(gpu="1", mem="10Gi", ephemeral_storage="10Gi"), container_image=imagespec)
+@task(requests=Resources(gpu="1", mem="10Gi", ephemeral_storage="10Gi", cpu="4"), container_image=imagespec)
 def train_gpu(dataset: DataLoader, n_epochs: int) -> th.nn.Sequential:
     """
     This task trains the model for the specified number of epochs.
