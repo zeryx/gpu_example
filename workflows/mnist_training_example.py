@@ -82,7 +82,6 @@ def train_model(model: th.nn.Sequential, optim: th.optim.Optimizer, dataset: Dat
     This function runs the inner training loop for the specified number of epochs.
     If a GPU is available, the model is moved to the GPU and the training is done on the GPU.
     """
-    running_loss = 0.0
     model = model.to("cuda").train()
     for epoch in range(n_epochs):
         for data, target in dataset:
@@ -93,8 +92,7 @@ def train_model(model: th.nn.Sequential, optim: th.optim.Optimizer, dataset: Dat
             loss = th.nn.functional.cross_entropy(output, target)
             loss.backward()
             optim.step()
-            running_loss += loss.item()
-            print(f"Epoch {epoch + 1}/{n_epochs}, Loss: {running_loss / len(dataset)}")
+            print(f"Epoch {epoch + 1}/{n_epochs}, Loss: {loss.item()}")
     return model
 
 
